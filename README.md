@@ -20,8 +20,10 @@ identifiers.
 
 Example output:
 
+```text
     /dev/usb0  addr 02  0x0bda:0xf179  Realtek  802.11n  urtwn0
     OpenBSD: Realtek RTL8188FTV (urtwn)
+```
 
 The first line contains information reported by the local system. The
 `OpenBSD:` line contains information from the OpenBSD Device Support Database.
@@ -51,13 +53,17 @@ On OpenBSD these can be installed with packages.
 
 Build with:
 
+```sh
     make
+```
 
 ## Testing
 
 The USB parser has a small test program using captured `usbdevs` output:
 
+```sh
     make test
+```
 
 ## How It Works
 
