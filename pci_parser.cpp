@@ -100,7 +100,6 @@ parse_pcidump_output(const std::string& input) {
 		}
 		if (line.starts_with(' ')) {
 			Device device{};
-			device.bus = DeviceBus::PCI;
 			device.controller = controller;
 
 			pos = 1;
@@ -110,7 +109,9 @@ parse_pcidump_output(const std::string& input) {
 			device.address = line.substr(pos, end_pos - pos);
 
 			pos = end_pos + name_delim.length();
-			device.pci_device_name = line.substr(pos);
+			device.bus_info = PciInfo {
+				.device_name = line.substr(pos)
+			};
 
 			if (!std::getline(file, line)) {
 				std::cerr << "Could not get device info\n";

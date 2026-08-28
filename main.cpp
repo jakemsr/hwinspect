@@ -9,31 +9,16 @@
 #include "db_lookup.hpp"
 
 
-void
-print_pci_devices(const std::string& pcidump) {
+std::string
+device_name(const Device& device)
+{
+	if (const auto* usb = std::get_if<UsbInfo>(&device.bus_info))
+		return usb->reported_vendor + " " + usb->reported_product;
 
-	auto devices = parse_pcidump_output(pcidump);
-	if (devices.empty()) {
-		std::cout << "No PCI devices found\n";
-		return;
-	}
+	if (const auto* pci = std::get_if<PciInfo>(&device.bus_info))
+		return pci->device_name;
 
-	auto longest = std::max_element(
-		devices.begin(),
-		devices.end(),
-		[](const Device& a, const Device& b) {
-			return a.address.length() < b.address.length();
-		});
-	size_t max_address_len = longest->address.length();
-
-
-	for (auto device: devices) {
-		std::cout << device.controller << "  "
-			<< std::left << std::setw(max_address_len) << device.address << "  "
-			<< device.vendor_id << ":" << device.product_id << "  "
-			<< device.pci_device_name << " "
-			<< device.driver << '\n';
-	}
+	return {};
 }
 
 int
@@ -86,29 +71,16 @@ main(int argc, char* argv[]) {
 	std::ranges::copy(usb_devices, std::back_inserter(devices));
 	std::ranges::copy(pci_devices, std::back_inserter(devices));
 
+	if (devices.empty())
+		return 0;
 
 	auto longest = std::max_element(
 		devices.begin(),
 		devices.end(),
 		[](const Device& a, const Device& b) {
-			std::string device_name_a, device_name_b;
-			if (a.bus == DeviceBus::USB)
-				device_name_a = a.usb_reported_vendor + " " + a.usb_reported_product;
-			else if (a.bus == DeviceBus::PCI)
-				device_name_a = a.pci_device_name;
-
-			if (b.bus == DeviceBus::USB)
-				device_name_b = b.usb_reported_vendor + " " + b.usb_reported_product;
-			else if (b.bus == DeviceBus::PCI)
-				device_name_b = b.pci_device_name;
-
-			return device_name_a.length() < device_name_b.length();
+			return device_name(a).length() < device_name(b).length();
 		});
-	size_t max_name_len;
-	if (longest->bus == DeviceBus::USB)
-		max_name_len = longest->usb_reported_vendor.length() + 1 + longest->usb_reported_product.length();
-	else if (longest->bus == DeviceBus::PCI)
-		max_name_len = longest->pci_device_name.length();
+	size_t max_name_len = device_name(*longest).length();
 
 	longest = std::max_element(
 		devices.begin(),
@@ -146,14 +118,8 @@ main(int argc, char* argv[]) {
 			<< std::setw(max_addr_len) << device.address << "  ";
 		std::cout << device.vendor_id << ':' << device.product_id << "  ";
 
-		std::string name;
-		if (device.bus == DeviceBus::PCI)
-			name = device.pci_device_name;
-		else if (device.bus == DeviceBus::USB)
-			name = device.usb_reported_vendor + " " + device.usb_reported_product;
-
 		std::cout << std::setfill(' ') << std::left <<
-			std::setw(max_name_len) << name << "  ";
+			std::setw(max_name_len) << device_name(device) << "  ";
 
 		std::cout << device.driver << '\n';
 		

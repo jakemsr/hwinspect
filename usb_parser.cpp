@@ -18,6 +18,7 @@ parse_device_line(const std::string& line) {
 	const std::string pid_delim = ":";
 	const std::string vendor_delim = " ";
 	const std::string product_delim = ", ";
+	std::string vendor, product;
 
 	/*
 	 * address
@@ -79,7 +80,7 @@ parse_device_line(const std::string& line) {
 		return std::nullopt;
 
 	len = end_pos - pos;
-	device.usb_reported_vendor = line.substr(pos, len);
+	vendor = line.substr(pos, len);
 	pos = end_pos;
 
 
@@ -90,8 +91,12 @@ parse_device_line(const std::string& line) {
 		return std::nullopt;
 
 	pos += product_delim.length();
-	device.usb_reported_product = line.substr(pos);
+	product = line.substr(pos);
 
+	device.bus_info = UsbInfo {
+		.reported_vendor = vendor,
+		.reported_product = product,
+	};
 
 	return device;
 }
@@ -116,7 +121,6 @@ parse_usbdevs_output(std::istream& input) {
 			auto device = parse_device_line(line);
 			if (device) {
 				device->controller = controller;
-				device->bus = DeviceBus::USB;
 				devices.push_back(*device);
 			}
 		} else if ((pos = line.find(driver_delim)) != std::string::npos) {
