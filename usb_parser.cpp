@@ -4,7 +4,6 @@
 #include "usb_parser.hpp"
 
 
-
 std::optional<Device>
 parse_device_line(const std::string& line) {
 
@@ -32,11 +31,7 @@ parse_device_line(const std::string& line) {
 		return std::nullopt;
 
 	len = end_pos - pos;
-	try {
-		device.address = std::stoi(line.substr(pos, len));
-	} catch (const std::exception&) {
-		return std::nullopt;
-	}
+	device.address = line.substr(pos, len);
 	pos = end_pos;
 
 
@@ -84,7 +79,7 @@ parse_device_line(const std::string& line) {
 		return std::nullopt;
 
 	len = end_pos - pos;
-	device.reported_vendor = line.substr(pos, len);
+	device.usb_reported_vendor = line.substr(pos, len);
 	pos = end_pos;
 
 
@@ -95,7 +90,7 @@ parse_device_line(const std::string& line) {
 		return std::nullopt;
 
 	pos += product_delim.length();
-	device.reported_product = line.substr(pos);
+	device.usb_reported_product = line.substr(pos);
 
 
 	return device;
@@ -121,6 +116,7 @@ parse_usbdevs_output(std::istream& input) {
 			auto device = parse_device_line(line);
 			if (device) {
 				device->controller = controller;
+				device->bus = DeviceBus::USB;
 				devices.push_back(*device);
 			}
 		} else if ((pos = line.find(driver_delim)) != std::string::npos) {

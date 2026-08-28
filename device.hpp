@@ -3,16 +3,22 @@
 
 #include <string>
 
-
-struct Device {
-	std::string controller;
-	int address;
-	std::string vendor_id;
-	std::string product_id;
-	std::string reported_vendor;
-	std::string reported_product;
-	std::string driver;
+enum class DeviceBus {
+	USB,
+	PCI
 };
 
+
+struct Device {
+	DeviceBus bus;
+	std::string controller;
+	std::string address;
+	std::string vendor_id;
+	std::string product_id;
+	std::string usb_reported_vendor;
+	std::string usb_reported_product;
+	std::string pci_device_name;
+	std::string driver;
+};
 
 #endif

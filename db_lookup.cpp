@@ -35,7 +35,7 @@ lookup_support(const Device& device) {
 	CURL *curl = curl_easy_init();
 
 	if (!curl) {
-		std::cerr << "Failed to initialize cCURL\n";
+		std::cerr << "Failed to initialize curl\n";
 		return std::nullopt;
 	}
 	
