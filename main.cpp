@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <fstream>
 #include <future>
 #include <iostream>
 #include <iomanip>
@@ -8,6 +9,12 @@
 #include "pci_parser.hpp"
 #include "db_lookup.hpp"
 
+
+void
+usage(const char* program)
+{
+	std::cerr << "usage: " << program << " [-p pcidump-file]\n";
+}
 
 std::string
 device_name(const Device& device)
@@ -23,25 +30,24 @@ device_name(const Device& device)
 
 int
 main(int argc, char* argv[]) {
-	std::string pcidump = "";
+	std::string pcidump_path = "";
 	
 	for (int i = 1; i < argc; i++) {
 		std::string flag = argv[i];
-		if (flag[0] != '-' || flag.length() != 2) {
+		if (flag.length() != 2 || flag[0] != '-') {
 			std::cerr << "malformed option flag\n";
 			exit(1);
 		}
 		switch (flag[1]) {
 			case 'p':
-				if (argv[++i]) {
-					pcidump = argv[i];
-				} else {
-					std::cerr << argv[0] << " -p (pcidump output file)\n";
+				if (i + 1 >= argc) {
+					usage(argv[0]);
 					exit(1);
 				}
+				pcidump_path = argv[++i];
 				break;
 			default:
-				std::cerr << argv[0] << " only accepts the -p option\n";
+				usage(argv[0]);
 				exit(1);
 				break;
 		}
@@ -60,7 +66,18 @@ main(int argc, char* argv[]) {
 	if (usb_devices.empty())
 		std::cout << "No USB devices found\n";
 
-	auto pci_devices = parse_pcidump_output(pcidump);
+	std::vector<Device> pci_devices{};
+	if (pcidump_path != "") {
+		std::vector<std::string> dmesg_lines = get_dmesg_pci_lines();
+
+		std::ifstream file(pcidump_path);
+		if (!file.is_open()) {
+			std::cerr << "Error: Could not open " << pcidump_path << '\n';
+			exit(1);
+		}
+
+		pci_devices = parse_pcidump_output(file, dmesg_lines);
+	}
 
 	if (pci_devices.empty())
 		std::cout << "No PCI devices found\n";
