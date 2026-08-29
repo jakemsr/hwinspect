@@ -48,7 +48,7 @@ test: ${TEST_USB} ${TEST_PCI}
 	./${TEST_USB} ./${TEST_PCI}
 
 clean:
-	rm -f ${PROG} ${TEST_USB} *.o *.core
+	rm -f ${PROG} ${TEST_USB} ${TEST_PCI} *.o *.core
 
 
 .PHONY:	all test clean
