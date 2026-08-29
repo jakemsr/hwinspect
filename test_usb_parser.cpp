@@ -31,25 +31,25 @@ addr 05: 04ca:3015 Lite-On Technology, product 0x3015
 
 	assert(devices.size() == 5);
 
-	assert(devices[0].address == 1);
+	assert(devices[0].address == "01");
 	assert(devices[0].vendor_id == "0x8086");
 	assert(devices[0].product_id == "0x0000");
-	assert(devices[0].reported_vendor == "Intel");
-	assert(devices[0].reported_product == "xHCI root hub");
+	assert(std::get_if<UsbInfo>(&devices[0].bus_info)->reported_vendor == "Intel");
+	assert(std::get_if<UsbInfo>(&devices[0].bus_info)->reported_product == "xHCI root hub");
 	assert(devices[0].driver == "uhub0");
 
-	assert(devices[1].address == 2);
+	assert(devices[1].address == "02");
 	assert(devices[1].vendor_id == "0x0bda");
 	assert(devices[1].product_id == "0xf179");
-	assert(devices[1].reported_vendor == "Realtek");
-	assert(devices[1].reported_product == "802.11n");
+	assert(std::get_if<UsbInfo>(&devices[1].bus_info)->reported_vendor == "Realtek");
+	assert(std::get_if<UsbInfo>(&devices[1].bus_info)->reported_product == "802.11n");
 	assert(devices[1].driver == "urtwn0");
 
-	assert(devices[2].address == 3);
+	assert(devices[2].address == "03");
 	assert(devices[2].vendor_id == "0x0bda");
 	assert(devices[2].product_id == "0x57cc");
-	assert(devices[2].reported_vendor == "NC2141103L533025AALM04");
-	assert(devices[2].reported_product == "HD WebCam");
+	assert(std::get_if<UsbInfo>(&devices[2].bus_info)->reported_vendor == "NC2141103L533025AALM04");
+	assert(std::get_if<UsbInfo>(&devices[2].bus_info)->reported_product == "HD WebCam");
 	assert(devices[2].driver == "uvideo0");
 
 
