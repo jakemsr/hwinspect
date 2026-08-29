@@ -2,6 +2,7 @@
 #define DEVICE_HPP
 
 #include <string>
+#include <variant>
 
 
 struct UsbInfo {
