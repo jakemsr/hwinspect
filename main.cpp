@@ -36,19 +36,19 @@ main(int argc, char* argv[]) {
 		std::string flag = argv[i];
 		if (flag.length() != 2 || flag[0] != '-') {
 			std::cerr << "malformed option flag\n";
-			exit(1);
+			return 1;
 		}
 		switch (flag[1]) {
 			case 'p':
 				if (i + 1 >= argc) {
 					usage(argv[0]);
-					exit(1);
+					return 1;
 				}
 				pcidump_path = argv[++i];
 				break;
 			default:
 				usage(argv[0]);
-				exit(1);
+				return 1;
 				break;
 		}
 	}
@@ -68,15 +68,31 @@ main(int argc, char* argv[]) {
 
 	std::vector<Device> pci_devices{};
 	if (pcidump_path != "") {
-		std::vector<std::string> dmesg_lines = get_dmesg_pci_lines();
 
-		std::ifstream file(pcidump_path);
-		if (!file.is_open()) {
+		std::ifstream pcidump_file(pcidump_path);
+		if (!pcidump_file.is_open()) {
 			std::cerr << "Error: Could not open " << pcidump_path << '\n';
-			exit(1);
+			return 1;
 		}
 
-		pci_devices = parse_pcidump_output(file, dmesg_lines);
+		pci_devices = parse_pcidump_output(pcidump_file);
+
+		const std::string dmesg_path = "/var/run/dmesg.boot";
+
+		std::ifstream dmesg_file(dmesg_path);
+		if (!dmesg_file.is_open()) {
+			std::cerr << "Error: Could not open " << dmesg_path << '\n';
+			return 1;
+		}
+
+		auto driver_map = map_dmesg_pci_drivers(dmesg_file);
+		if (!driver_map)
+			return 1;
+
+		for (auto& device: pci_devices) {
+			if (driver_map->contains(device.address))
+				device.driver = driver_map->at(device.address);
+		}
 	}
 
 	if (pci_devices.empty())

@@ -1,8 +1,7 @@
 #include <cassert>
 #include <sstream>
-#include <vector>
-
 #include "pci_parser.hpp"
+
 
 int
 main() {
@@ -158,22 +157,188 @@ Domain /dev/pci0:
 	0x0180: Enhanced Capability 0x1e: L1 PM
 )");
 
-	std::vector<std::string> dmesg_lines = {
-R"(iosf0 at pci0 dev 0 function 0 "Intel Braswell Host" rev 0x21: mbi)",
-R"(inteldrm0 at pci0 dev 2 function 0 "Intel HD Graphics" rev 0x21)",
-R"("Intel Braswell Power" rev 0x21 at pci0 dev 11 function 0 not configured)",
-R"(xhci0 at pci0 dev 20 function 0 "Intel Braswell xHCI" rev 0x21: msi, xHCI 1.0)",
-R"("Intel Braswell TXE" rev 0x21 at pci0 dev 26 function 0 not configured)",
-R"(azalia0 at pci0 dev 27 function 0 "Intel Braswell HD Audio" rev 0x21: msi)",
-R"(ppb0 at pci0 dev 28 function 0 "Intel Braswell PCIE" rev 0x21: msi)",
-R"(re0 at pci1 dev 0 function 0 "Realtek 8168" rev 0x15: RTL8168H/8111H (0x5400), msi, address 30:65:ec:8c:84:cc)",
-R"(ppb1 at pci0 dev 28 function 1 "Intel Braswell PCIE" rev 0x21: msi)",
-R"("Atheros QCA9377" rev 0x30 at pci2 dev 0 function 0 not configured)",
-R"(pcib0 at pci0 dev 31 function 0 "Intel Braswell PCU LPC" rev 0x21)",
-R"(ichiic0 at pci0 dev 31 function 3 "Intel Braswell SMBus" rev 0x21: apic 1 int 18)"
-};
+	std::istringstream dmesg(R"(
+OpenBSD 7.9 (GENERIC.MP) #449: Wed May  6 13:17:25 MDT 2026
+    deraadt@amd64.openbsd.org:/usr/src/sys/arch/amd64/compile/GENERIC.MP
+real mem = 1929375744 (1839MB)
+avail mem = 1843494912 (1758MB)
+random: good seed from bootblocks
+mpath0 at root
+scsibus0 at mpath0: 256 targets
+mainbus0 at root
+bios0 at mainbus0: SMBIOS rev. 2.8 @ 0xe73e0 (20 entries)
+bios0: vendor Insyde Corp. version "V1.09" date 07/21/2015
+bios0: Acer Aspire R3-131T
+acpi0 at bios0: ACPI 5.0
+acpi0: sleep states S0 S3 S4 S5
+acpi0: tables DSDT FACP UEFI MSDM TCPA UEFI SSDT MCFG SSDT SSDT SSDT SSDT SSDT APIC SSDT TPM2 FPDT
+acpi0: wakeup devices XHC1(S3) BRC1(S0) HDEF(S4) RP01(S4) PXSX(S4) RP02(S4) PXSX(S4) RP03(S4) PXSX(S4) RP04(S4) PXSX(S4) LID0(S3) SLPB(S3)
+acpitimer0 at acpi0: 3579545 Hz, 24 bits
+acpimcfg0 at acpi0
+acpimcfg0: addr 0xe0000000, bus 0-63
+acpimadt0 at acpi0 addr 0xfee00000: PC-AT compat
+cpu0 at mainbus0: apid 0 (boot processor)
+cpu0: Intel(R) Celeron(R) CPU N3050 @ 1.60GHz, 1760.22 MHz, 06-4c-03, patch 00000368
+cpu0: cpuid 1 edx=bfebfbff<FPU,VME,DE,PSE,TSC,MSR,PAE,MCE,CX8,APIC,SEP,MTRR,PGE,MCA,CMOV,PAT,PSE36,CFLUSH,DS,ACPI,MMX,FXSR,SSE,SSE2,SS,HTT,TM,PBE> ecx=43d8e3bf<SSE3,PCLMUL,DTES64,MWAIT,DS-CPL,VMX,EST,TM2,SSSE3,CX16,xTPR,PDCM,SSE4.1,SSE4.2,MOVBE,POPCNT,DEADLINE,AES,RDRAND>
+cpu0: cpuid 6 eax=7<SENSOR,ARAT> ecx=9<EFFFREQ>
+cpu0: cpuid 7.0 ebx=2282<TSC_ADJUST,SMEP,ERMS> edx=c000400<MD_CLEAR,IBRS,IBPB,STIBP>
+cpu0: cpuid a vers=3, gp=2, gpwidth=40, ff=3, ffwidth=40
+cpu0: cpuid 80000001 edx=28100800<NXE,RDTSCP,LONG> ecx=101<LAHF,3DNOWP>
+cpu0: cpuid 80000007 edx=100<ITSC>
+cpu0: MELTDOWN
+cpu0: 24KB 64b/line 6-way D-cache, 32KB 64b/line 8-way I-cache, 1MB 64b/line 16-way L2 cache
+cpu0: smt 0, core 0, package 0, type P
+mtrr: Pentium Pro MTRR support, 8 var ranges, 88 fixed ranges
+cpu0: apic clock running at 79MHz
+cpu0: mwait min=64, max=64, C-substates=0.2, IBE
+cpu1 at mainbus0: apid 4 (application processor)
+cpu1: Intel(R) Celeron(R) CPU N3050 @ 1.60GHz, 1600.19 MHz, 06-4c-03, patch 00000368
+cpu1: smt 0, core 2, package 0, type P
+ioapic0 at mainbus0: apid 1 pa 0xfec00000, version 20, 115 pins
+acpiprt0 at acpi0: bus 0 (PCI0)
+acpiprt1 at acpi0: bus 1 (RP01)
+acpiprt2 at acpi0: bus 2 (RP02)
+acpiprt3 at acpi0: bus -1 (RP03)
+acpiprt4 at acpi0: bus -1 (RP04)
+acpiec0 at acpi0
+acpipci0 at acpi0 PCI0: 0x00000004 0x00000011 0x00000001
+acpiac0 at acpi0: AC unit online
+acpibat0 at acpi0: BAT0 model "AC14B3K" serial  6430 type LION oem "SANYO"
+"INT33D3" at acpi0 not configured
+"INT33D6" at acpi0 not configured
+"10250759" at acpi0 not configured
+sdhc0 at acpi0 SDHA addr 0x91523000/0x1000 irq 45
+sdhc0: SDHC 3.00, 200 MHz base clock
+sdmmc0 at sdhc0: 8-bit, sd high-speed, mmc high-speed, ddr52, dma
+sdhc1 at acpi0 SDHC addr 0x91521000/0x1000 irq 47
+sdhc1: SDHC 3.00, 200 MHz base clock
+sdmmc1 at sdhc1: 4-bit, sd high-speed, mmc high-speed, ddr52, dma
+"INTL9C60" at acpi0 not configured
+dwiic0 at acpi0 I2C3 addr 0x9151d000/0x1000 irq 34
+iic0 at dwiic0
+ihidev0 at iic0 addr 0x50 ihidev0: can't establish interrupt
+ (polling), vendor 0x416 product 0xc300, INT33D1
+ihidev0: 2 report ids
+hid at ihidev0 reportid 1 not configured
+hid at ihidev0 reportid 2 not configured
+dwiic1 at acpi0 I2C6 addr 0x9151b000/0x1000 irq 37
+iic1 at dwiic1
+ihidev1 at iic1 addr 0x15 ihidev1: can't establish interrupt
+ (polling), vendor 0x4f3 product 0x3010, ELAN0501
+ihidev1: 93 report ids
+imt0 at ihidev1: clickpad, 5 contacts
+wsmouse0 at imt0 mux 0
+ims0 at ihidev1 reportid 1: 2 buttons, Z and W dir
+wsmouse1 at ims0 mux 0
+hid at ihidev1 reportid 5 not configured
+hid at ihidev1 reportid 6 not configured
+hid at ihidev1 reportid 7 not configured
+hid at ihidev1 reportid 11 not configured
+hid at ihidev1 reportid 12 not configured
+hid at ihidev1 reportid 13 not configured
+ims1 at ihidev1 reportid 93: 0 buttons
+wsmouse2 at ims1 mux 0
+"PNP0C14" at acpi0 not configured
+acpicmos0 at acpi0
+chvgpio0 at acpi0 GPO0 uid 1 addr 0xfed80000/0x8000 irq 49, 56 pins
+chvgpio1 at acpi0 GPO1 uid 2 addr 0xfed88000/0x8000 irq 48, 59 pins
+chvgpio2 at acpi0 GPO2 uid 3 addr 0xfed90000/0x8000 irq 50, 24 pins
+chvgpio3 at acpi0 GPO3 uid 4 addr 0xfed98000/0x8000 irq 91, 55 pins
+acpibtn0 at acpi0: LID0(wakeup)
+acpibtn1 at acpi0: SLPB(wakeup)
+"PNP0C14" at acpi0 not configured
+"INT3400" at acpi0 not configured
+"INT3403" at acpi0 not configured
+"INT3403" at acpi0 not configured
+tpm0 at acpi0 TPM_: unsupported TPM2 start method 2
+"PNP0C0B" at acpi0 not configured
+acpicpu0 at acpi0: C2 bad (state 6 has no substates): C3 bad (state 7 has no substates): C1(1000@1 mwait.1), PSS
+acpicpu1 at acpi0: C2 bad (state 6 has no substates): C3 bad (state 7 has no substates): C1(1000@1 mwait.1), PSS
+acpipwrres0 at acpi0: CLK0
+acpipwrres1 at acpi0: CLK0, resource for CAM1
+acpipwrres2 at acpi0: CLK1, resource for CAM2, CAM3
+acpipwrres3 at acpi0: ID3C, resource for ISP3
+acpipwrres4 at acpi0: USBC, resource for XHC1
+acpipwrres5 at acpi0: FN00, resource for FAN0
+acpitz0 at acpi0
+acpitz0: critical temperature is 105 degC
+acpivideo0 at acpi0: GFX0
+acpivout0 at acpivideo0: DD1F
+cpu0: using VERW MDS workaround
+cpu0: Enhanced SpeedStep 1760 MHz: speeds: 1601, 1600, 1520, 1440, 1360, 1280, 1200, 1120, 1040, 960, 880 MHz
+pci0 at mainbus0 bus 0
+iosf0 at pci0 dev 0 function 0 "Intel Braswell Host" rev 0x21: mbi
+inteldrm0 at pci0 dev 2 function 0 "Intel HD Graphics" rev 0x21
+drm0 at inteldrm0
+inteldrm0: msi, CHERRYVIEW, gen 8
+"Intel Braswell Power" rev 0x21 at pci0 dev 11 function 0 not configured
+xhci0 at pci0 dev 20 function 0 "Intel Braswell xHCI" rev 0x21: msi, xHCI 1.0
+usb0 at xhci0: USB revision 3.0
+uhub0 at usb0 configuration 1 interface 0 "Intel xHCI root hub" rev 3.00/1.00 addr 1
+"Intel Braswell TXE" rev 0x21 at pci0 dev 26 function 0 not configured
+azalia0 at pci0 dev 27 function 0 "Intel Braswell HD Audio" rev 0x21: msi
+azalia0: codecs: Realtek ALC255, Intel/0x2883, using Realtek ALC255
+audio0 at azalia0
+ppb0 at pci0 dev 28 function 0 "Intel Braswell PCIE" rev 0x21: msi
+pci1 at ppb0 bus 1
+re0 at pci1 dev 0 function 0 "Realtek 8168" rev 0x15: RTL8168H/8111H (0x5400), msi, address 30:65:ec:8c:84:cc
+rgephy0 at re0 phy 7: RTL8251, rev. 0
+ppb1 at pci0 dev 28 function 1 "Intel Braswell PCIE" rev 0x21: msi
+pci2 at ppb1 bus 2
+"Atheros QCA9377" rev 0x30 at pci2 dev 0 function 0 not configured
+pcib0 at pci0 dev 31 function 0 "Intel Braswell PCU LPC" rev 0x21
+ichiic0 at pci0 dev 31 function 3 "Intel Braswell SMBus" rev 0x21: apic 1 int 18
+iic2 at ichiic0
+spdmem0 at iic2 addr 0x50: 2GB DDR3 SDRAM PC3-12800 SO-DIMM
+isa0 at pcib0
+isadma0 at isa0
+com0 at isa0 port 0x3f8/8 irq 4: ns16550a, 16 byte fifo
+pckbc0 at isa0 port 0x60/5 irq 1 irq 12
+pckbd0 at pckbc0 (kbd slot)
+wskbd0 at pckbd0: console keyboard
+pms0 at pckbc0 (aux slot)
+wsmouse3 at pms0 mux 0
+pcppi0 at isa0 port 0x61
+spkr0 at pcppi0
+vmm0 at mainbus0: VMX/EPT (using slow L1TF mitigation)
+sdmmc1: can't enable card
+scsibus1 at sdmmc0: 2 targets, initiator 0
+sd0 at scsibus1 targ 1 lun 0: <Hynix, HBG4e\\005, 0000>
+sd0: 29824MB, 512 bytes/sector, 61079552 sectors
+urtwn0 at uhub0 port 1 configuration 1 interface 0 "Realtek 802.11n" rev 2.00/0.00 addr 2
+urtwn0: MAC/BB RTL8188FTV, RF 6052 1T1R, address bc:1c:81:23:85:a6
+uvideo0 at uhub0 port 3 configuration 1 interface 0 "NC2141103L533025AALM04 HD WebCam" rev 2.00/0.04 addr 3
+video0 at uvideo0
+uhidev0 at uhub0 port 4 configuration 1 interface 0 "Raydium Corporation Raydium Touch System" rev 2.00/0.00 addr 4
+uhidev0: iclass 3/0, 68 report ids
+uhid0 at uhidev0 reportid 1: input=0, output=63, feature=0
+uhid1 at uhidev0 reportid 2: input=63, output=0, feature=0
+uhid2 at uhidev0 reportid 3: input=0, output=63, feature=0
+uhid3 at uhidev0 reportid 4: input=0, output=63, feature=0
+uhid4 at uhidev0 reportid 5: input=0, output=63, feature=0
+uhid5 at uhidev0 reportid 6: input=63, output=0, feature=0
+uhid6 at uhidev0 reportid 7: input=0, output=63, feature=0
+uhid7 at uhidev0 reportid 8: input=0, output=63, feature=0
+uhid8 at uhidev0 reportid 9: input=63, output=0, feature=0
+ums0 at uhidev0 reportid 10: 1 button, tip
+wsmouse4 at ums0 mux 0
+uhid9 at uhidev0 reportid 11: input=0, output=0, feature=1
+ums1 at uhidev0 reportid 68: 0 buttons
+wsmouse5 at ums1 mux 0
+ugen0 at uhub0 port 5 "Lite-On Technology product 0x3015" rev 2.01/0.01 addr 5
+vscsi0 at root
+scsibus2 at vscsi0: 256 targets
+softraid0 at root
+scsibus3 at softraid0: 256 targets
+root on sd0a (a519c5c633b88f5c.a) swap on sd0b dump on sd0b
+inteldrm0: 1366x768, 32bpp
+wsdisplay0 at inteldrm0 mux 1: console (std, vt100 emulation), using wskbd0
+wsdisplay0: screen 1-5 added (std, vt100 emulation)
+)");
 
-	std::vector<Device> devices = parse_pcidump_output(pcidump, dmesg_lines);
+
+
+	std::vector<Device> devices = parse_pcidump_output(pcidump);
 
 	assert(devices.size() == 10);
 
@@ -181,20 +346,23 @@ R"(ichiic0 at pci0 dev 31 function 3 "Intel Braswell SMBus" rev 0x21: apic 1 int
 	assert(devices[0].vendor_id == "0x8086");
 	assert(devices[0].product_id == "0x2280");
 	assert(std::get_if<PciInfo>(&devices[0].bus_info)->device_name == "Intel Braswell Host");
-	assert(devices[0].driver == "iosf0");
 
 	assert(devices[5].address == "0:27:0");
 	assert(devices[5].vendor_id == "0x8086");
 	assert(devices[5].product_id == "0x2284");
 	assert(std::get_if<PciInfo>(&devices[5].bus_info)->device_name == "Intel Braswell HD Audio");
-	assert(devices[5].driver == "azalia0");
 
 	assert(devices[8].address == "1:0:0");
 	assert(devices[8].vendor_id == "0x10ec");
 	assert(devices[8].product_id == "0x8168");
 	assert(std::get_if<PciInfo>(&devices[5].bus_info)->device_name == "Realtek 8168");
-	assert(devices[8].driver == "re0");
 
+
+	auto driver_map = map_dmesg_pci_drivers(dmesg);
+
+	assert(driver_map->at(devices[0].address) == "iosf0");
+	assert(driver_map->at(devices[5].address) == "azalia0");
+	assert(driver_map->at(devices[8].address) == "re0");
 
 	return 0;
 }

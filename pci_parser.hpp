@@ -1,16 +1,16 @@
 #ifndef PCI_PARSER_HPP
 #define PCI_PARSER_HPP
 
-#include "device.hpp"
-
+#include <map>
 #include <optional>
 #include <vector>
+#include "device.hpp"
 
-std::vector<std::string>
-get_dmesg_pci_lines();
+
+std::optional<std::map<std::string, std::string>>
+map_dmesg_pci_drivers(std::istream& dmesg);
 
 std::vector<Device>
-parse_pcidump_output(std::istream& pcidump,
-	const std::vector<std::string>& dmesg_lines);
+parse_pcidump_output(std::istream& pcidump);
 
 #endif

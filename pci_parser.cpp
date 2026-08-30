@@ -1,48 +1,10 @@
 #include <fstream>
 #include <iostream>
 #include <regex>
-
 #include "pci_parser.hpp"
 
+
 namespace {
-
-std::string
-find_driver(const std::string& address, const std::vector<std::string>& dmesg_lines) {
-	std::string driver = "";
-
-    std::string bus, dev, function;
-    std::string delim = ":";
-    std::size_t pos = 0;
-    std::size_t end_pos = 0;
-    if ((end_pos = address.find(delim, pos)) == std::string::npos) {
-		std::cerr << "Could not find pci bus: " << address << '\n';
-		return driver;
-	}
-	bus = address.substr(pos, end_pos - pos);
-	pos = end_pos + delim.length();
-
-    if ((end_pos = address.find(delim, pos)) == std::string::npos) {
-		std::cerr << "Could not find pci dev: " << address << '\n';
-		return driver;
-	}
-	dev = address.substr(pos, end_pos - pos);
-	pos = end_pos + delim.length();
-
-	function = address.substr(pos);
-
-	std::string bus_dev_func =
-		"at pci" + bus + " dev " + dev + " function " + function;
-
-	for (const auto& line: dmesg_lines) {
-		if (line.find(bus_dev_func) != std::string::npos) {
-			end_pos = line.find(" ", 0);
-			driver = line.substr(0, end_pos);
-			break;
-		}
-	}
-
-	return driver;
-}
 
 std::optional<Device>
 get_device(const std::string& line, const std::string& next_line) {
@@ -94,32 +56,28 @@ get_device(const std::string& line, const std::string& next_line) {
 
 }
 
-std::vector<std::string>
-get_dmesg_pci_lines() {
-	std::vector<std::string> lines{};
+std::optional<std::map<std::string, std::string>>
+map_dmesg_pci_drivers(std::istream& dmesg) {
+	std::map<std::string, std::string> driver_map;
 
-	const std::string dmesg = "/var/run/dmesg.boot";
-
-	std::ifstream file(dmesg);
-
-    if (!file.is_open()) {
-        std::cerr << "Error: Could not open " << dmesg << '\n';
-        return lines;
-    }
-
-    const std::regex pattern(R"(^[a-z]+\d+ at pci\d+ dev \d+ function \d+)");
+    const std::regex pattern(R"(^([a-z]+\d+) at pci(\d+) dev (\d+) function (\d+))");
+    std::smatch match;
+    std::string driver;
+    std::string address;
     std::string line;
-    while (std::getline(file, line)) {
-		if (std::regex_search(line, pattern))
-			lines.push_back(line);
+    while (std::getline(dmesg, line)) {
+		if (std::regex_search(line, match, pattern)) {
+			driver = match[1].str();
+			address = match[2].str() + ":" + match[3].str() + ":" + match[4].str();
+			driver_map.try_emplace(address, driver);
+		}
 	}
 
-    return lines;
+    return driver_map;
 }
 
 std::vector<Device>
-parse_pcidump_output(std::istream& pcidump,
-	const std::vector<std::string>& dmesg_lines) {
+parse_pcidump_output(std::istream& pcidump) {
 	std::vector<Device> devices{};
 
     std::string controller;
@@ -146,8 +104,6 @@ parse_pcidump_output(std::istream& pcidump,
 				continue;
 
 			device->controller = controller;
-
-			device->driver = find_driver(device->address, dmesg_lines);
 
 			devices.push_back(*device);
 		}
