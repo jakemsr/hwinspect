@@ -45,7 +45,8 @@ test_pci_parser.o: test_pci_parser.cpp pci_parser.hpp device.hpp
 
 
 test: ${TEST_USB} ${TEST_PCI}
-	./${TEST_USB} ./${TEST_PCI}
+	./${TEST_USB}
+	./${TEST_PCI}
 
 clean:
 	rm -f ${PROG} ${TEST_USB} ${TEST_PCI} *.o *.core
