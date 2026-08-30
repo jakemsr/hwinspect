@@ -7,7 +7,7 @@
 #include "device.hpp"
 
 
-std::optional<std::map<std::string, std::string>>
+std::map<std::string, std::string>
 map_dmesg_pci_drivers(std::istream& dmesg);
 
 std::vector<Device>

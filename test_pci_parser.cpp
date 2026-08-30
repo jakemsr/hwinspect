@@ -355,14 +355,14 @@ wsdisplay0: screen 1-5 added (std, vt100 emulation)
 	assert(devices[8].address == "1:0:0");
 	assert(devices[8].vendor_id == "0x10ec");
 	assert(devices[8].product_id == "0x8168");
-	assert(std::get_if<PciInfo>(&devices[5].bus_info)->device_name == "Realtek 8168");
+	assert(std::get_if<PciInfo>(&devices[8].bus_info)->device_name == "Realtek 8168");
 
 
 	auto driver_map = map_dmesg_pci_drivers(dmesg);
 
-	assert(driver_map->at(devices[0].address) == "iosf0");
-	assert(driver_map->at(devices[5].address) == "azalia0");
-	assert(driver_map->at(devices[8].address) == "re0");
+	assert(driver_map.at(devices[0].address) == "iosf0");
+	assert(driver_map.at(devices[5].address) == "azalia0");
+	assert(driver_map.at(devices[8].address) == "re0");
 
 	return 0;
 }

@@ -56,7 +56,7 @@ get_device(const std::string& line, const std::string& next_line) {
 
 }
 
-std::optional<std::map<std::string, std::string>>
+std::map<std::string, std::string>
 map_dmesg_pci_drivers(std::istream& dmesg) {
 	std::map<std::string, std::string> driver_map;
 

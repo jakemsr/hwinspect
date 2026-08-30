@@ -91,15 +91,13 @@ main(int argc, char* argv[]) {
 		}
 
 		auto driver_map = map_dmesg_pci_drivers(dmesg_file);
-		if (!driver_map)
-			return 1;
 
 		for (auto& device: pci_devices) {
-			if (driver_map->contains(device.address))
-				device.driver = driver_map->at(device.address);
+			if (auto it = driver_map.find(device.address);
+				it != driver_map.end())
+				device.driver = it->second;
 		}
 	}
-
 
 	std::vector<Device> devices;
 	devices.reserve(usb_devices.size() + pci_devices.size());
@@ -161,7 +159,7 @@ main(int argc, char* argv[]) {
 		
 		if (!support_response)
 			continue;
-			
+
 		for (const SupportMatch& match: support_response->matches) {
 			std::cout << "OpenBSD: ";
 			std::cout << match.openbsd_vendor << " ";
