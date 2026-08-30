@@ -1,0 +1,9 @@
+db_lookup.o
+hwinspect
+main.o
+pci_parser.o
+test_pci_parser
+test_pci_parser.o
+test_usb_parser
+test_usb_parser.o
+usb_parser.o

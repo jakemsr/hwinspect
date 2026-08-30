@@ -76,6 +76,11 @@ main(int argc, char* argv[]) {
 		}
 
 		pci_devices = parse_pcidump_output(pcidump_file);
+		if (pci_devices.empty())
+			std::cout << "No PCI devices found\n";
+	}
+
+	if (!pci_devices.empty()) {
 
 		const std::string dmesg_path = "/var/run/dmesg.boot";
 
@@ -95,8 +100,6 @@ main(int argc, char* argv[]) {
 		}
 	}
 
-	if (pci_devices.empty())
-		std::cout << "No PCI devices found\n";
 
 	std::vector<Device> devices;
 	devices.reserve(usb_devices.size() + pci_devices.size());
@@ -159,16 +162,13 @@ main(int argc, char* argv[]) {
 		if (!support_response)
 			continue;
 			
-		//std::cout << support_response->bus << " ";
-		//std::cout << support_response->vendor_id << ":";
-		//std::cout << support_response->product_id << '\n';
 		for (const SupportMatch& match: support_response->matches) {
 			std::cout << "OpenBSD: ";
 			std::cout << match.openbsd_vendor << " ";
 			std::cout << match.openbsd_device << " ";
 			std::cout << "(" << match.openbsd_driver << ")" << '\n';
 			if (!match.other_names.empty()) {
-				std::cout << "  " << "Also known as\n";
+				std::cout << "  " << "Also known as:\n";
 				for (const OtherName& other_name: match.other_names) {
 					std::cout << "    " << other_name.vendor;
 					std::cout << " " << other_name.device << '\n';
