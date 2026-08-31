@@ -23,10 +23,14 @@ write_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
 std::optional<SupportResponse>
 lookup_support(const Device& device) {
 	
+	std::string bus = "USB";
+	if (std::holds_alternative<PciInfo>(device.bus_info))
+		bus = "PCI";
+
 	std::string url = 
 		"https://obsd-device-support.vercel.app/"
 		"api/devices/by_bus_vid_pid"
-		"?bus=USB"
+		"?bus=" + bus +
 		"&vendor_id=" + device.vendor_id +
 		"&product_id=" + device.product_id;
 
